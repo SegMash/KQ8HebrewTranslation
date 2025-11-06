@@ -1,0 +1,15 @@
+__pycache__
+.vscode
+bitmaps
+font
+glyphs
+hebrew_letters
+output
+tools/__pycache__
+tools/*.pyc
+output_kq3/
+*.csv
+*.zip
+*.pft
+*.pal
+*.json

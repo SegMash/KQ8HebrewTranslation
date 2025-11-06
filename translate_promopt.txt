@@ -1,0 +1,3 @@
+Can you translate the current file into Hebrew for me? I don't want a literal translation, but a translation that will preserve the context of the game. If it is not possible to translate directly into Hebrew due to nuances that do not exist in Hebrew - feel free to translate differently, as long as the idea of ​​the text is preserved. If you have any doubt whether it is a male or female, prefer male. 
+The empty lines separate conversations. I recommend that you read a conversation and then translate it.
+Please keep the order of the lines.
