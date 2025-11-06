@@ -13,3 +13,5 @@ output_kq3/
 *.pft
 *.pal
 *.json
+*/*_messages_output.txt
+*/*_mapping.txt
