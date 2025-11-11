@@ -304,28 +304,28 @@ def parse_font_file(filename, bitmaps_folder, debug=False):
                     print(f"Saved bitmap to: {bmp_filename}")
                 
                 # Convert BMP to PNG using palette (direct function call)
-                if CONVERTER_AVAILABLE:
-                    png_filename = os.path.join(bitmaps_folder, f"bitmap_{bitmap_index:03d}.png")
-                    palette_file = "menus.pal"
+                #if CONVERTER_AVAILABLE:
+                    #png_filename = os.path.join(bitmaps_folder, f"bitmap_{bitmap_index:03d}.png")
+                    #palette_file = "menus.pal"
                     
-                    try:
-                        # Load palette if available
-                        palette = None
-                        if os.path.exists(palette_file):
-                            palette = load_palette_from_file(palette_file)
+                    #try:
+                    #    # Load palette if available
+                    #    palette = None
+                    #    if os.path.exists(palette_file):
+                    #        palette = load_palette_from_file(palette_file)
                         
                         # Convert using direct function call
-                        convert_bmp_to_png(bmp_filename, png_filename, palette)
-                        if debug:
-                            print(f"Converted to PNG: {png_filename}")
+                    #    convert_bmp_to_png(bmp_filename, png_filename, palette)
+                    #    if debug:
+                    #        print(f"Converted to PNG: {png_filename}")
                         
-                    except Exception as e:
-                        if debug:
-                            print(f"Warning: Could not convert {bmp_filename} to PNG: {e}")
-                else:
-                    if debug:
-                        print("Warning: convert_bmp_to_png module not found. PNG conversion will be skipped.")
-                        print("PNG conversion skipped (converter not available)")
+                    #except Exception as e:
+                    #    if debug:
+                    #        print(f"Warning: Could not convert {bmp_filename} to PNG: {e}")
+                #else:
+                #    if debug:
+                #        print("Warning: convert_bmp_to_png module not found. PNG conversion will be skipped.")
+                #        print("PNG conversion skipped (converter not available)")
 
             bitmap_footer_unknown = f.read(4)
 
