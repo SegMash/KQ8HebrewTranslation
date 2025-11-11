@@ -11,7 +11,7 @@ import json
 import glob
 from PIL import Image
 
-def create_font_file(metadata_filename, bitmaps_folder, output_filename):
+def create_font_file(metadata_filename, bitmaps_folder, output_filename, debug=False):
     """
     Create a KQ8 font file from metadata and bitmap BMPs
     
@@ -19,13 +19,15 @@ def create_font_file(metadata_filename, bitmaps_folder, output_filename):
         metadata_filename: Path to the JSON metadata file
         bitmaps_folder: Path to folder containing bitmap BMP files
         output_filename: Path to output font file
+        debug: Whether to print debug information
     """
     
     # Load metadata
     with open(metadata_filename, 'r') as meta_file:
         metadata = json.load(meta_file)
     
-    print(f"Loaded metadata from: {metadata_filename}")
+    if debug:
+        print(f"Loaded metadata from: {metadata_filename}")
 
     # Scan bitmaps folder for BMP files
     bitmap_files = glob.glob(os.path.join(bitmaps_folder, "bitmap_*.bmp"))
@@ -53,15 +55,18 @@ def create_font_file(metadata_filename, bitmaps_folder, output_filename):
                     'data': list(img.getdata())  # Get pixel data as list
                 }
                 bitmap_data_list.append(bitmap_data)
-                print(f"Loaded bitmap {index}: {img.width}x{img.height} from {bitmap_file}")
+                if debug:
+                    print(f"Loaded bitmap {index}: {img.width}x{img.height} from {bitmap_file}")
                 
             except ValueError:
-                print(f"Warning: Skipping invalid bitmap filename: {filename}")
+                if debug:
+                    print(f"Warning: Skipping invalid bitmap filename: {filename}")
     
     # Sort bitmaps by index
     bitmap_data_list.sort(key=lambda x: x['index'])
     
-    print(f"Found {len(bitmap_data_list)} bitmap files")
+    if debug:
+        print(f"Found {len(bitmap_data_list)} bitmap files")
     
     # Update bitmap count in metadata
     metadata['bitmap_array']['bitmap_count'] = len(bitmap_data_list)
@@ -228,25 +233,30 @@ def create_font_file(metadata_filename, bitmaps_folder, output_filename):
         # Return to end of file
         f.seek(current_pos)
     
-    print(f"Created font file: {output_filename}")
-    print(f"File size: {os.path.getsize(output_filename)} bytes")
+    if debug:
+        print(f"Created font file: {output_filename}")
+        print(f"File size: {os.path.getsize(output_filename)} bytes")
 
 def main():
     """Main function"""
-    if len(sys.argv) < 2:
-        print("Usage: python create_font.py <metadata_json> [bitmaps_folder] [output_font]")
-        print("Example: python create_font.py console_metadata.json bitmaps console_new.pft")
+    # Check for debug parameter (can be anywhere in args)
+    debug = 'debug' in [arg.lower() for arg in sys.argv]
+    args = [arg for arg in sys.argv if arg.lower() != 'debug']  # Remove debug from args
+    
+    if len(args) < 2:
+        print("Usage: python create_font.py <metadata_json> [bitmaps_folder] [output_font] [debug]")
+        print("Example: python create_font.py console_metadata.json bitmaps console_new.pft debug")
         sys.exit(1)
     
-    metadata_file = sys.argv[1]
+    metadata_file = args[1]
     
-    if len(sys.argv) >= 3:
-        bitmaps_folder = sys.argv[2]
+    if len(args) >= 3:
+        bitmaps_folder = args[2]
     else:
         bitmaps_folder = "bitmaps"
     
-    if len(sys.argv) >= 4:
-        output_font = sys.argv[3]
+    if len(args) >= 4:
+        output_font = args[3]
     else:
         # Generate output filename from metadata file
         base_name = os.path.splitext(metadata_file)[0]
@@ -264,15 +274,18 @@ def main():
         sys.exit(1)
     
     try:
-        print(f"Creating font file from {metadata_file} and {bitmaps_folder}...")
-        create_font_file(metadata_file, bitmaps_folder, output_font)
+        if debug:
+            print(f"Creating font file from {metadata_file} and {bitmaps_folder}...")
+        create_font_file(metadata_file, bitmaps_folder, output_font, debug)
         
-        print(f"\nSUCCESS: Font file created: {output_font}")
+        if debug:
+            print(f"\nSUCCESS: Font file created: {output_font}")
         
     except Exception as e:
         print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
+        if debug:
+            import traceback
+            traceback.print_exc()
         sys.exit(1)
 
 if __name__ == "__main__":

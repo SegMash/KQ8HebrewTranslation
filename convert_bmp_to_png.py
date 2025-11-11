@@ -10,7 +10,7 @@ import struct
 from PIL import Image
 import json
 
-def load_palette_from_file(palette_file):
+def load_palette_from_file(palette_file, debug=False):
     """
     Load palette data from a file. Supports multiple formats:
     - .pal files (JASC-PAL format or raw text)
@@ -42,7 +42,8 @@ def load_palette_from_file(palette_file):
                         r, g, b = map(int, lines[i].split())
                         palette.extend([r, g, b])
                     except ValueError:
-                        print(f"Warning: Invalid color line {i}: '{lines[i]}'")
+                        if debug:
+                            print(f"Warning: Invalid color line {i}: '{lines[i]}'")
                         palette.extend([0, 0, 0])  # Default to black
                 
                 # Pad to 256 colors if needed
@@ -53,7 +54,8 @@ def load_palette_from_file(palette_file):
             
             else:
                 # Try raw RGB text format (3 numbers per line or 3 columns)
-                print("Trying raw RGB text format...")
+                if debug:
+                    print("Trying raw RGB text format...")
                 palette = []
                 
                 for line in lines:
@@ -63,7 +65,8 @@ def load_palette_from_file(palette_file):
                             r, g, b = map(int, parts[:3])
                             palette.extend([r, g, b])
                         except ValueError:
-                            print(f"Warning: Invalid RGB line: '{line}'")
+                            if debug:
+                                print(f"Warning: Invalid RGB line: '{line}'")
                             continue
                 
                 if len(palette) == 0:
@@ -73,7 +76,8 @@ def load_palette_from_file(palette_file):
                 while len(palette) < 768:
                     palette.extend([0, 0, 0])
                 
-                print(f"Loaded {len(palette)//3} colors from raw RGB format")
+                if debug:
+                    print(f"Loaded {len(palette)//3} colors from raw RGB format")
                 return palette
     
     elif ext == '.act':
@@ -107,12 +111,13 @@ def create_default_grayscale_palette():
         palette.extend([i, i, i])  # R, G, B all the same for grayscale
     return palette
 
-def extract_palette_from_font(font_file):
+def extract_palette_from_font(font_file, debug=False):
     """
     Extract palette from KQ8 font file if it has one
     
     Args:
         font_file: Path to .pft font file
+        debug: Whether to print debug information
         
     Returns:
         List of RGB values or None if no palette
@@ -124,21 +129,25 @@ def extract_palette_from_font(font_file):
             has_palette = struct.unpack('<I', f.read(4))[0]
             
             if has_palette == 0:
-                print("Font file has no palette")
+                if debug:
+                    print("Font file has no palette")
                 return None
             
-            print(f"Font file indicates palette present (value: {has_palette})")
+            if debug:
+                print(f"Font file indicates palette present (value: {has_palette})")
             
             # For now, we'll return None since we need to implement
             # the actual palette reading logic
-            print("Palette extraction from font files not yet implemented")
+            if debug:
+                print("Palette extraction from font files not yet implemented")
             return None
             
     except Exception as e:
-        print(f"Error checking font palette: {e}")
+        if debug:
+            print(f"Error checking font palette: {e}")
         return None
 
-def convert_bmp_to_png(bmp_file, output_file, palette=None):
+def convert_bmp_to_png(bmp_file, output_file, palette=None, debug=False):
     """
     Convert indexed BMP file to RGB PNG using palette
     
@@ -146,11 +155,13 @@ def convert_bmp_to_png(bmp_file, output_file, palette=None):
         bmp_file: Path to input BMP file
         output_file: Path to output PNG file  
         palette: List of RGB values [r1,g1,b1,r2,g2,b2,...] or None for grayscale
+        debug: Whether to print debug information
     """
     # Load BMP file
     img = Image.open(bmp_file)
     
-    print(f"Input image: {img.size[0]}x{img.size[1]}, mode: {img.mode}")
+    if debug:
+        print(f"Input image: {img.size[0]}x{img.size[1]}, mode: {img.mode}")
     
     # Convert to mode 'L' (8-bit grayscale) if not already
     #if img.mode != 'L':
@@ -163,9 +174,11 @@ def convert_bmp_to_png(bmp_file, output_file, palette=None):
     if palette is None:
         # Use default grayscale palette
         palette = create_default_grayscale_palette()
-        print("Using default grayscale palette")
+        if debug:
+            print("Using default grayscale palette")
     else:
-        print(f"Using custom palette with {len(palette)//3} colors")
+        if debug:
+            print(f"Using custom palette with {len(palette)//3} colors")
     
     # Create palette mode image ('P')
     palette_img = Image.new('P', (width, height))
@@ -179,9 +192,10 @@ def convert_bmp_to_png(bmp_file, output_file, palette=None):
 
     # Save as PNG with palette
     palette_img.save(output_file, 'PNG')
-    print(f"Converted {bmp_file} -> {output_file} (palette mode)")
+    if debug:
+        print(f"Converted {bmp_file} -> {output_file} (palette mode)")
 
-def convert_folder(input_folder, output_folder, palette_file=None, font_file=None):
+def convert_folder(input_folder, output_folder, palette_file=None, font_file=None, debug=False):
     """
     Convert all BMP files in a folder to PNG files
     
@@ -190,6 +204,7 @@ def convert_folder(input_folder, output_folder, palette_file=None, font_file=Non
         output_folder: Folder for output PNG files
         palette_file: Path to palette file (optional)
         font_file: Path to font file to extract palette from (optional)
+        debug: Whether to print debug information
     """
     # Load palette if provided
     palette = None
@@ -197,20 +212,23 @@ def convert_folder(input_folder, output_folder, palette_file=None, font_file=Non
     # Try to load palette from font file first
     if font_file and os.path.exists(font_file):
         try:
-            palette = extract_palette_from_font(font_file)
-            if palette:
+            palette = extract_palette_from_font(font_file, debug)
+            if palette and debug:
                 print(f"Extracted palette from font file {font_file}")
         except Exception as e:
-            print(f"Error extracting palette from font: {e}")
+            if debug:
+                print(f"Error extracting palette from font: {e}")
     
     # If no palette from font, try palette file
     if palette is None and palette_file and os.path.exists(palette_file):
         try:
-            palette = load_palette_from_file(palette_file)
-            print(f"Loaded palette from {palette_file}")
+            palette = load_palette_from_file(palette_file, debug)
+            if debug:
+                print(f"Loaded palette from {palette_file}")
         except Exception as e:
-            print(f"Error loading palette: {e}")
-            print("Using default grayscale palette")
+            if debug:
+                print(f"Error loading palette: {e}")
+                print("Using default grayscale palette")
     
     # Create output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
@@ -219,10 +237,12 @@ def convert_folder(input_folder, output_folder, palette_file=None, font_file=Non
     bmp_files = [f for f in os.listdir(input_folder) if f.lower().endswith('.bmp')]
     
     if not bmp_files:
-        print(f"No BMP files found in {input_folder}")
+        if debug:
+            print(f"No BMP files found in {input_folder}")
         return
     
-    print(f"Found {len(bmp_files)} BMP files to convert")
+    if debug:
+        print(f"Found {len(bmp_files)} BMP files to convert")
     
     # Convert each BMP file
     for bmp_file in sorted(bmp_files):
@@ -231,11 +251,12 @@ def convert_folder(input_folder, output_folder, palette_file=None, font_file=Non
         output_path = os.path.join(output_folder, output_name)
         
         try:
-            convert_bmp_to_png(input_path, output_path, palette)
+            convert_bmp_to_png(input_path, output_path, palette, debug)
         except Exception as e:
-            print(f"Error converting {bmp_file}: {e}")
+            if debug:
+                print(f"Error converting {bmp_file}: {e}")
 
-def create_sample_palette_files():
+def create_sample_palette_files(debug=False):
     """Create sample palette files for testing"""
     
     # Create JASC-PAL format sample
@@ -259,12 +280,13 @@ def create_sample_palette_files():
         for i in range(256):
             f.write(bytes([i, i, i]))  # RGB grayscale
     
-    print("Created sample palette files:")
-    print("  sample_palette.pal (JASC-PAL format)")
-    print("  sample_palette.json (JSON format)")
-    print("  sample_palette.bin (Binary format)")
+    if debug:
+        print("Created sample palette files:")
+        print("  sample_palette.pal (JASC-PAL format)")
+        print("  sample_palette.json (JSON format)")
+        print("  sample_palette.bin (Binary format)")
 
-def analyze_palette_file(palette_file):
+def analyze_palette_file(palette_file, debug=False):
     """
     Analyze a palette file to determine its format and show contents
     """
@@ -328,22 +350,26 @@ def analyze_palette_file(palette_file):
                 print("✗ Size not divisible by 3 (unusual for RGB palette)")
 
 def main():
-    if len(sys.argv) < 2:
+    # Check for debug parameter (can be anywhere in args)
+    debug = 'debug' in [arg.lower() for arg in sys.argv]
+    args = [arg for arg in sys.argv if arg.lower() != 'debug']  # Remove debug from args
+    
+    if len(args) < 2:
         print("BMP to PNG Converter with Palette Support")
         print("=" * 50)
         print("")
         print("Usage:")
         print("  Convert single file:")
-        print("    python convert_bmp_to_png.py input.bmp [output.png] [palette_file]")
+        print("    python convert_bmp_to_png.py input.bmp [output.png] [palette_file] [debug]")
         print("")
         print("  Convert folder:")
-        print("    python convert_bmp_to_png.py folder input_folder output_folder [palette_file] [font_file]")
+        print("    python convert_bmp_to_png.py folder input_folder output_folder [palette_file] [font_file] [debug]")
         print("")
         print("  Analyze palette file:")
-        print("    python convert_bmp_to_png.py analyze palette_file")
+        print("    python convert_bmp_to_png.py analyze palette_file [debug]")
         print("")
         print("  Create sample palette files:")
-        print("    python convert_bmp_to_png.py samples")
+        print("    python convert_bmp_to_png.py samples [debug]")
         print("")
         print("Supported palette formats:")
         print("  .pal  - JASC-PAL format")
@@ -356,45 +382,46 @@ def main():
         print("  python convert_bmp_to_png.py bitmap_001.bmp")
         print("  python convert_bmp_to_png.py bitmap_001.bmp output.png")
         print("  python convert_bmp_to_png.py bitmap_001.bmp output.png palette.pal")
+        print("  python convert_bmp_to_png.py bitmap_001.bmp output.png palette.pal debug")
         print("  python convert_bmp_to_png.py folder bitmaps png_output")
         print("  python convert_bmp_to_png.py folder bitmaps png_output palette.pal")
-        print("  python convert_bmp_to_png.py folder bitmaps png_output \"\" console.pft")
+        print("  python convert_bmp_to_png.py folder bitmaps png_output \"\" console.pft debug")
         return
     
-    if sys.argv[1] == "samples":
-        create_sample_palette_files()
+    if args[1] == "samples":
+        create_sample_palette_files(debug)
         return
     
-    if sys.argv[1] == "analyze":
-        if len(sys.argv) < 3:
-            print("Usage: python convert_bmp_to_png.py analyze palette_file")
+    if args[1] == "analyze":
+        if len(args) < 3:
+            print("Usage: python convert_bmp_to_png.py analyze palette_file [debug]")
             return
-        analyze_palette_file(sys.argv[2])
+        analyze_palette_file(args[2], debug)
         return
     
-    if sys.argv[1] == "folder":
+    if args[1] == "folder":
         # Folder conversion mode
-        if len(sys.argv) < 4:
+        if len(args) < 4:
             print("Error: Folder mode requires input and output folders")
-            print("Usage: python convert_bmp_to_png.py folder input_folder output_folder [palette_file] [font_file]")
+            print("Usage: python convert_bmp_to_png.py folder input_folder output_folder [palette_file] [font_file] [debug]")
             return
         
-        input_folder = sys.argv[2]
-        output_folder = sys.argv[3]
-        palette_file = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] != "" else None
-        font_file = sys.argv[5] if len(sys.argv) > 5 else None
+        input_folder = args[2]
+        output_folder = args[3]
+        palette_file = args[4] if len(args) > 4 and args[4] != "" else None
+        font_file = args[5] if len(args) > 5 else None
         
         if not os.path.exists(input_folder):
             print(f"Error: Input folder '{input_folder}' not found")
             return
         
-        convert_folder(input_folder, output_folder, palette_file, font_file)
+        convert_folder(input_folder, output_folder, palette_file, font_file, debug)
         
     else:
         # Single file conversion mode
-        input_file = sys.argv[1]
-        output_file = sys.argv[2] if len(sys.argv) > 2 else None
-        palette_file = sys.argv[3] if len(sys.argv) > 3 else None
+        input_file = args[1]
+        output_file = args[2] if len(args) > 2 else None
+        palette_file = args[3] if len(args) > 3 else None
         
         if not os.path.exists(input_file):
             print(f"Error: Input file '{input_file}' not found")
@@ -409,15 +436,17 @@ def main():
         if palette_file and os.path.exists(palette_file):
             try:
                 if palette_file.endswith('.pft'):
-                    palette = extract_palette_from_font(palette_file)
+                    palette = extract_palette_from_font(palette_file, debug)
                 else:
-                    palette = load_palette_from_file(palette_file)
-                print(f"Loaded palette from {palette_file}")
+                    palette = load_palette_from_file(palette_file, debug)
+                if debug:
+                    print(f"Loaded palette from {palette_file}")
             except Exception as e:
-                print(f"Error loading palette: {e}")
-                print("Using default grayscale palette")
+                if debug:
+                    print(f"Error loading palette: {e}")
+                    print("Using default grayscale palette")
         
-        convert_bmp_to_png(input_file, output_file, palette)
+        convert_bmp_to_png(input_file, output_file, palette, debug)
 
 if __name__ == "__main__":
     main()

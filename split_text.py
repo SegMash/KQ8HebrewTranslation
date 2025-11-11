@@ -16,9 +16,9 @@ def calculate_weighted_length(text: str) -> float:
     """
     length = 0.0
     for char in text:
-        if char in ['.',"'",'!']:
+        if char in ['.',"'"]:
             length += 0.25
-        elif char in [' ', ',',';','"','-']:
+        elif char in [' ', ',',';','"','-','!']:
             length += 0.5
         else:
             length += 1.0
@@ -80,9 +80,9 @@ def split_string_by_length_internal(input_string: str, max_length: int, debug: b
         # Advance character by character until we reach max weighted length
         while chunk_end < len(input_string) and current_weighted_length < max_length:
             char = input_string[chunk_end]
-            if char in ["'",'!','.']:
+            if char in ["'",'.']:
                 char_weight = 0.25
-            elif char in [' ', ',',';','"','-']:
+            elif char in [' ', ',',';','"','-','!']:
                 char_weight = 0.5
             else:
                 char_weight = 1.0
@@ -91,7 +91,8 @@ def split_string_by_length_internal(input_string: str, max_length: int, debug: b
                 current_weighted_length += char_weight
                 chunk_end += 1
             else:
-                print(f"Debug: pos={pos}, chunk_end={chunk_end}, weighted_len={current_weighted_length:.2f}, chunk='{input_string[pos:chunk_end]}'")
+                if debug:
+                    print(f"Debug: pos={pos}, chunk_end={chunk_end}, weighted_len={current_weighted_length:.2f}, chunk='{input_string[pos:chunk_end]}'")
                 break
             #print(f"Debug: char='{char}', weight={current_weighted_length}")
         
@@ -158,7 +159,8 @@ def split_string(input: str, max_length: int, debug: bool = True):
                 continue
             padding_needed = 26.5 - calculate_weighted_length(prev_chunk)
             padding_to_add = 0
-            print(f"Debug: padding_needed={padding_needed:.2f}")
+            if debug:
+                print(f"Debug: padding_needed={padding_needed:.2f}")
             padding_chars = int(int(padding_needed)/2)
             if padding_chars > 0: 
                 if padding_needed != int(padding_needed):
@@ -255,4 +257,7 @@ if __name__ == "__main__":
         print(f"Test 4 Result: '{result}'")
 
         result = split_string("זה היה כישוף של אפלה. מסכת הנצח ספגה גורל נורא; היא נופצה על ידי ישות רעה אשר מאז קבעה את משכנה במקדש הקדוש של המסכה.",max_length, True)
+        print(f"Test 4 Result: '{result}'")
+
+        result = split_string("אהה! יש לי את זה! הדיפיברילטור האלקטרומגנטי הטרה-קוסמי שלי! בעזרתו, אוכל להזיז את הקוטב המגנטי של כדור הארץ במעט... ולננו-שנייה בלבד. אבל זה יספיק! זה יערים על המפה שלך ויספק נקודת מסע חדשה. הקושי היחיד הוא...", max_length, True)
         print(f"Test 4 Result: '{result}'")

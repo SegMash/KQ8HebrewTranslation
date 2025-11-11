@@ -2,7 +2,6 @@ __pycache__
 .vscode
 bitmaps
 font
-glyphs
 hebrew_letters
 output
 tools/__pycache__
@@ -13,5 +12,7 @@ output_kq3/
 *.pft
 *.pal
 *.json
-*/*_messages_output.txt
+*/*_messages_english.txt
 */*_mapping.txt
+glyphs_fixed
+patch

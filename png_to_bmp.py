@@ -16,7 +16,7 @@ import sys
 from PIL import Image
 import glob
 
-def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry"):
+def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", debug=False):
     """
     Convert a PNG glyph file to BMP format for KQ8 fonts
     
@@ -24,13 +24,15 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry"):
         png_file: Path to input PNG file
         output_dir: Output directory for BMP files
         palette_name: Palette to use ("daventry" or "castle")
+        debug: Whether to print debug information
     """
     try:
         # Load PNG image
         img = Image.open(png_file)
         width, height = img.size
         
-        print(f"Processing: {os.path.basename(png_file)} ({width}x{height})")
+        if debug:
+            print(f"Processing: {os.path.basename(png_file)} ({width}x{height})")
         
         # Convert to 8-bit grayscale/palette mode if needed
         if img.mode == 'P':
@@ -49,18 +51,33 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry"):
         # Apply palette-specific pixel value mappings
         if palette_name == "daventry":
             color1=157
-            color2=156
+            #color2=156
+            color2=157
             color3=76
         elif palette_name == "castle":
             color1=204
-            color2=205
+            #color2=205
+            color2=204
             color3=19
+        elif palette_name == "deadcity":
+            color1=208
+            color2=208
+            color3=16
+        elif palette_name == "swamp":
+            color1=235
+            color2=235
+            color3=34
+        elif palette_name == "gnome":
+            color1=172
+            color2=172
+            color3=54
         else:
             raise ValueError(f"Invalid palette name: {palette_name}. Must be 'daventry' or 'castle'.")
         
         # Daventry palette mappings
         pixel_data = [0 if pixel < 10 else pixel for pixel in pixel_data]
         pixel_data = [10 if pixel == 127 else pixel for pixel in pixel_data]
+        pixel_data = [10 if pixel == 195 else pixel for pixel in pixel_data]
         pixel_data = [color1 if pixel == 172 else pixel for pixel in pixel_data]
         pixel_data = [color1 if pixel == 202 else pixel for pixel in pixel_data]
         pixel_data = [color1 if pixel == 213 else pixel for pixel in pixel_data]
@@ -87,16 +104,18 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry"):
         # Save as BMP
         output_img.save(output_file, 'BMP')
         
-        print(f"  → Saved: {output_file}")
-        print(f"  → Dimensions: {width}x{height}, encoding: {dimension_encoding}")
+        if debug:
+            print(f"  → Saved: {output_file}")
+            print(f"  → Dimensions: {width}x{height}, encoding: {dimension_encoding}")
         
         return True
         
     except Exception as e:
-        print(f"Error processing {png_file}: {e}")
+        if debug:
+            print(f"Error processing {png_file}: {e}")
         return False
 
-def process_glyphs_directory(glyphs_dir, output_dir="bitmaps", palette_name="daventry"):
+def process_glyphs_directory(glyphs_dir, output_dir="bitmaps", palette_name="daventry", debug=False):
     """
     Process all PNG files in a glyphs directory
     
@@ -104,12 +123,14 @@ def process_glyphs_directory(glyphs_dir, output_dir="bitmaps", palette_name="dav
         glyphs_dir: Directory containing PNG glyph files
         output_dir: Output directory for BMP files
         palette_name: Palette to use ("daventry" or "castle")
+        debug: Whether to print debug information
     """
     
-    print(f"Scanning glyphs directory: {glyphs_dir}")
-    print(f"Output directory: {output_dir}")
-    print(f"Using palette: {palette_name}")
-    print("=" * 60)
+    if debug:
+        print(f"Scanning glyphs directory: {glyphs_dir}")
+        print(f"Output directory: {output_dir}")
+        print(f"Using palette: {palette_name}")
+        print("=" * 60)
     
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
@@ -119,38 +140,43 @@ def process_glyphs_directory(glyphs_dir, output_dir="bitmaps", palette_name="dav
     png_files = glob.glob(png_pattern)
     
     if not png_files:
-        print(f"No PNG files found in {glyphs_dir}")
+        if debug:
+            print(f"No PNG files found in {glyphs_dir}")
         return
     
     # Sort files for consistent processing order
     png_files.sort()
     
-    print(f"Found {len(png_files)} PNG files to process")
-    print()
+    if debug:
+        print(f"Found {len(png_files)} PNG files to process")
+        print()
     
     # Process each PNG file
     success_count = 0
     for png_file in png_files:
-        if convert_png_to_bmp(png_file, output_dir, palette_name):
+        if convert_png_to_bmp(png_file, output_dir, palette_name, debug):
             success_count += 1
-        print()  # Empty line between files
+        if debug:
+            print()  # Empty line between files
     
-    print("=" * 60)
-    print(f"Processing complete!")
-    print(f"Successfully converted: {success_count}/{len(png_files)} files")
-    print(f"Output directory: {output_dir}")
-    
-    # Show some statistics
-    if success_count > 0:
-        bmp_files = glob.glob(os.path.join(output_dir, "*.bmp"))
-        print(f"Total BMP files in output directory: {len(bmp_files)}")
+    if debug:
+        print("=" * 60)
+        print(f"Processing complete!")
+        print(f"Successfully converted: {success_count}/{len(png_files)} files")
+        print(f"Output directory: {output_dir}")
+        
+        # Show some statistics
+        if success_count > 0:
+            bmp_files = glob.glob(os.path.join(output_dir, "*.bmp"))
+            print(f"Total BMP files in output directory: {len(bmp_files)}")
 
-def analyze_png_file(png_file):
+def analyze_png_file(png_file, debug=False):
     """
     Analyze a PNG file and show detailed information
     
     Args:
         png_file: Path to PNG file
+        debug: Whether to print debug information
     """
     try:
         img = Image.open(png_file)
@@ -184,16 +210,20 @@ def analyze_png_file(png_file):
 
 def main():
     """Main function"""
-    if len(sys.argv) < 3:
+    # Check for debug parameter (can be anywhere in args)
+    debug = 'debug' in [arg.lower() for arg in sys.argv]
+    args = [arg for arg in sys.argv if arg.lower() != 'debug']  # Remove debug from args
+    
+    if len(args) < 3:
         print("PNG to BMP Converter for KQ8 Font Glyphs")
         print("=" * 45)
         print("")
         print("Usage:")
         print("  Process glyphs directory:")
-        print("    python png_to_bmp.py <glyphs_directory> <palette> [output_directory]")
+        print("    python png_to_bmp.py <glyphs_directory> <palette> [output_directory] [debug]")
         print("")
         print("  Analyze single PNG file:")
-        print("    python png_to_bmp.py analyze <png_file>")
+        print("    python png_to_bmp.py analyze <png_file> [debug]")
         print("")
         print("Arguments:")
         print("  glyphs_directory  - Directory containing PNG glyph files")
@@ -202,9 +232,9 @@ def main():
         print("")
         print("Examples:")
         print("  python png_to_bmp.py glyphs daventry")
-        print("  python png_to_bmp.py glyphs castle bitmaps")
-        print("  python png_to_bmp.py hebrew_letters daventry castle\\bitmaps")
-        print("  python png_to_bmp.py analyze glyphs/bitmap_096.png")
+        print("  python png_to_bmp.py glyphs castle bitmaps debug")
+        print("  python png_to_bmp.py hebrew_letters daventry castle\\bitmaps debug")
+        print("  python png_to_bmp.py analyze glyphs/bitmap_096.png debug")
         print("")
         print("Features:")
         print("  - Converts PNG files to 8-bit BMP format")
@@ -215,28 +245,28 @@ def main():
         print("  - Processes all *.png files in directory")
         return
     
-    if sys.argv[1] == "analyze":
-        if len(sys.argv) < 3:
-            print("Usage: python png_to_bmp.py analyze <png_file>")
+    if args[1] == "analyze":
+        if len(args) < 3:
+            print("Usage: python png_to_bmp.py analyze <png_file> [debug]")
             return
         
-        png_file = sys.argv[2]
+        png_file = args[2]
         if not os.path.exists(png_file):
             print(f"Error: File '{png_file}' not found")
             return
         
-        analyze_png_file(png_file)
+        analyze_png_file(png_file, debug)
         return
     
     # Process glyphs directory
-    glyphs_dir = sys.argv[1]
-    palette_name = sys.argv[2]
-    output_dir = sys.argv[3] if len(sys.argv) > 3 else "bitmaps"
+    glyphs_dir = args[1]
+    palette_name = args[2]
+    output_dir = args[3] if len(args) > 3 else "bitmaps"
     
     # Validate palette name
-    if palette_name not in ["daventry", "castle"]:
-        print(f"Error: Invalid palette '{palette_name}'. Must be 'daventry' or 'castle'")
-        return
+    #if palette_name not in ["daventry", "castle"]:
+    #    print(f"Error: Invalid palette '{palette_name}'. Must be 'daventry' or 'castle'")
+    #    return
     
     if not os.path.exists(glyphs_dir):
         print(f"Error: Glyphs directory '{glyphs_dir}' not found")
@@ -247,11 +277,12 @@ def main():
         return
     
     try:
-        process_glyphs_directory(glyphs_dir, output_dir, palette_name)
+        process_glyphs_directory(glyphs_dir, output_dir, palette_name, debug)
     except Exception as e:
         print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
+        if debug:
+            import traceback
+            traceback.print_exc()
 
 if __name__ == "__main__":
     main()

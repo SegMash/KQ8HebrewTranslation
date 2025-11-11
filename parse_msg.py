@@ -10,12 +10,13 @@ import sys
 import os
 import argparse
 
-def parse_msg_file(filename):
+def parse_msg_file(filename, debug=False):
     """
     Parse a KQ8 MSG file and extract all messages
     
     Args:
         filename: Path to the MSG file
+        debug: Whether to print debug information
         
     Returns:
         List of message dictionaries
@@ -31,15 +32,18 @@ def parse_msg_file(filename):
         
         # Read dataSize (2 bytes) - important
         data_size = struct.unpack('<H', f.read(2))[0]
-        print(f"Data size: {data_size}")
+        if debug:
+            print(f"Data size: {data_size}")
         
         # Read lastId (2 bytes)
         last_id = struct.unpack('<H', f.read(2))[0]
-        print(f"Last ID: {last_id}")
+        if debug:
+            print(f"Last ID: {last_id}")
         
         # Read count (2 bytes)
         count = struct.unpack('<H', f.read(2))[0]
-        print(f"Message count: {count}")
+        if debug:
+            print(f"Message count: {count}")
         
         # First loop: Read message headers
         message_headers = []
@@ -102,20 +106,23 @@ def parse_msg_file(filename):
             message['text'] = text
             messages.append(message)
             
-            print(f"Message {i+1}: noun={header['noun']}, verb={header['verb']}, text_offset={header['text_offset']} text='{text[:50]}{'...' if len(text) > 50 else ''}'")
+            if debug:
+                print(f"Message {i+1}: noun={header['noun']}, verb={header['verb']}, text_offset={header['text_offset']} text='{text[:50]}{'...' if len(text) > 50 else ''}'")
     
     return messages
 
-def export_to_csv(messages, output_filename):
+def export_to_csv(messages, output_filename, debug=False):
     """
     Export messages to CSV file
     
     Args:
         messages: List of message dictionaries
         output_filename: Path to output CSV file
+        debug: Whether to print debug information
     """
     if not messages:
-        print("No messages to export")
+        if debug:
+            print("No messages to export")
         return
     
     # Define column order
@@ -127,18 +134,21 @@ def export_to_csv(messages, output_filename):
         writer.writeheader()
         writer.writerows(messages)
     
-    print(f"Exported {len(messages)} messages to {output_filename}")
+    if debug:
+        print(f"Exported {len(messages)} messages to {output_filename}")
 
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Parse KQ8 MSG files and export to CSV format')
     parser.add_argument('input_file', help='Path to the input MSG file')
     parser.add_argument('output_dir', help='Directory to save the output CSV file')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
     
     args = parser.parse_args()
     
     input_file = args.input_file
     output_dir = args.output_dir
+    debug = args.debug
     
     # Check if input file exists
     if not os.path.exists(input_file):
@@ -148,7 +158,8 @@ def main():
     # Check if output directory exists, create if not
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"Created output directory: {output_dir}")
+        if debug:
+            print(f"Created output directory: {output_dir}")
     
     # Generate output filename based on input file base name
     input_basename = os.path.splitext(os.path.basename(input_file))[0]  # Remove extension
@@ -156,13 +167,16 @@ def main():
     output_path = os.path.join(output_dir, output_filename)
     
     try:
-        print(f"Parsing {input_file}...")
-        messages = parse_msg_file(input_file)
+        if debug:
+            print(f"Parsing {input_file}...")
+        messages = parse_msg_file(input_file, debug)
         
-        print(f"\nExporting to {output_path}...")
-        export_to_csv(messages, output_path)
+        if debug:
+            print(f"\nExporting to {output_path}...")
+        export_to_csv(messages, output_path, debug)
         
-        print(f"\nDone! Found {len(messages)} messages.")
+        if debug:
+            print(f"\nDone! Found {len(messages)} messages.")
         
     except Exception as e:
         print(f"Error: {e}")

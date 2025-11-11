@@ -4,32 +4,45 @@ First find the palette:
 Create current bitmap file. for example the subtitle font:
 - `python.exe .\parse_font.py C:\Games\KQ8\daventry\8gui\console.pft bitmaps`
 - `python.exe .\parse_font.py C:\Games\KQ8\castled\8gui\console.pft castle\bitmaps`
+- `python.exe .\parse_font.py C:\Games\KQ8\deadcity\8gui\console.pft deadcity\bitmaps`
+- `python.exe .\parse_font.py C:\Games\KQ8\swamp\8gui\console.pft swamp\bitmaps`
+Now understand the colors of the bitmaps
+`python.exe .\debug_bitmap.py .\deadcity\bitmaps\bitmap_065.bmp`
+And then update png_to_bmp.py with the new colors
 (this script uses the convert_bmp_to_png script)
 Now work on the letters 096-122 and convert back to bmp
 If you need to fix more letters (like ! -001 - this is the time. save it in glyphs directory as color png)
+Script to fix glyphs to prepare a font
+`python.exe .\fix_glyph.py .\glyphs_12 .\glyphs_fixed`
+
 Convert back to bmp and save them in bitmaps folder:
-- `python png_to_bmp.py .\glyphs daventry .\bitmaps daventry`
-- `python png_to_bmp.py .\glyphs castle .\castle\bitmaps`
+- `python png_to_bmp.py .\glyphs_fixed daventry .\bitmaps`
+- `python png_to_bmp.py .\glyphs_fixed castle .\castle\bitmaps`
+- `python png_to_bmp.py .\glyphs_fixed deadcity .\deadcity\bitmaps`
+- `python png_to_bmp.py .\glyphs_fixed swamp .\swamp\bitmaps`
 
 And now recreate the font
 - `python.exe .\create_font.py C:\Games\KQ8\daventry\8gui\console_metadata.json .\bitmaps C:\Games\KQ8\daventry\8gui\console.pft`
-- `python.exe .\create_font.py C:\Games\KQ8\castled\8gui\console_metadata.json .\castle\bitmaps C:\Games\KQ8\castled\8gui\console.pf`
+- `python.exe .\create_font.py C:\Games\KQ8\castled\8gui\console_metadata.json .\castle\bitmaps C:\Games\KQ8\castled\8gui\console.pft`
+- `python.exe .\create_font.py C:\Games\KQ8\deadcity\8gui\console_metadata.json .\deadcity\bitmaps C:\Games\KQ8\deadcity\8gui\console.pft`
+- `python.exe .\create_font.py C:\Games\KQ8\swamp\8gui\console_metadata.json .\swamp\bitmaps C:\Games\KQ8\swamp\8gui\console.pft`
 
 # Translation process
 1. parse the MSG file
-`python.exe .\parse_msg.py C:\Games\KQ8\daventry\English\1000.MSG output`
+`python.exe .\parse_msg.py C:\Games\KQ8\daventry\English\1000.MSG daventry`
+`python.exe .\parse_msg.py C:\Games\KQ8\deadcity\English\2000.MSG deadcity`
+`python.exe .\parse_msg.py C:\Games\KQ8\swamp\English\3000.MSG swamp`
+
 2. extract english messages
-`python process_messages.py output/1000_messages.csv output`
+`python process_messages.py daventry/1000_messages.csv daventry`
+`python process_messages.py deadcity/2000_messages.csv deadcity`
+`python process_messages.py swamp/3000_messages.csv swamp`
 3. AI - Translate to hebrew - use `translate_promopt.txt` - agent should create output\1000_messages_output_hebrew.txt
 4. Check files are alligned (1000_messages_output.txt & 1000_messages_output_hebrew.txt)
-5. Create mapping file
-`python.exe .\map_files.py .\output\1000_messages_output.txt .\output\1000_messages_output_hebrew.txt .\output\1000_mapping.txt 26`
-6. Create new csv file
-`python translate_csv.py output\1000_messages.csv output\1000_mapping.txt output\1000_messages_hebrew.csv`
-7. `python.exe .\create_msg.py output\1000_messages_hebrew.csv C:\Games\KQ8\daventry\English\1000.MSG`
-
-Or instead of step 5-7:
-`.\recreate_msg.cmd`
+5. Create mapping file.
+6. Create new csv file.
+7. Create msg file.
+`example: .\recreate_msg.cmd`
 
 # More trnaslations tools
 1. create_csv.py - get english & hebrew files and create csv with tested?, comments columns.

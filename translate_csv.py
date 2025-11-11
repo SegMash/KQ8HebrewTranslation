@@ -77,7 +77,7 @@ for msg in messages:
         translated_count += 1
     else:
         # If not found, keep original or mark as missing
-        print(f"Warning: Translation not found for: '{cleaned_text[:50]}...'")
+        print(f"Warning: Translation not found for: '{cleaned_text[:50]}...' original_text={original_text}")
         msg['text'] = cleaned_text  # Keep cleaned English text if no translation
         not_found_count += 1
 

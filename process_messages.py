@@ -17,7 +17,7 @@ if not os.path.exists(args.csv_file):
 # Generate output filename from CSV filename
 csv_basename = os.path.basename(args.csv_file)
 csv_name_without_ext = os.path.splitext(csv_basename)[0]
-output_filename = f"{csv_name_without_ext}_output.txt"
+output_filename = f"{csv_name_without_ext}_english.txt"
 output_file = os.path.join(args.output_dir, output_filename)
 
 # Read the CSV file and convert to list of dictionaries
