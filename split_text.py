@@ -16,7 +16,7 @@ def calculate_weighted_length(text: str) -> float:
     """
     length = 0.0
     for char in text:
-        if char in ['.',"'"]:
+        if char in ['.',"'",':']:
             length += 0.25
         elif char in [' ', ',',';','"','-','!']:
             length += 0.5
@@ -80,7 +80,7 @@ def split_string_by_length_internal(input_string: str, max_length: int, debug: b
         # Advance character by character until we reach max weighted length
         while chunk_end < len(input_string) and current_weighted_length < max_length:
             char = input_string[chunk_end]
-            if char in ["'",'.']:
+            if char in ["'",'.',':']:
                 char_weight = 0.25
             elif char in [' ', ',',';','"','-','!']:
                 char_weight = 0.5
@@ -260,4 +260,7 @@ if __name__ == "__main__":
         print(f"Test 4 Result: '{result}'")
 
         result = split_string("אהה! יש לי את זה! הדיפיברילטור האלקטרומגנטי הטרה-קוסמי שלי! בעזרתו, אוכל להזיז את הקוטב המגנטי של כדור הארץ במעט... ולננו-שנייה בלבד. אבל זה יספיק! זה יערים על המפה שלך ויספק נקודת מסע חדשה. הקושי היחיד הוא...", max_length, True)
+        print(f"Test 4 Result: '{result}'")
+
+        result = split_string("מה פתאום, חייב להיות, הוד מלכותך! מסעי ברור: עליי לנדוד לממלכת השמש ולהשיב את מסכת הנצח.", max_length, True)
         print(f"Test 4 Result: '{result}'")

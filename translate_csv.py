@@ -68,11 +68,26 @@ not_found_count = 0
 
 for msg in messages:
     original_text = msg['text']
+    if "You are about" in original_text:
+        print(f"Debug: Original text='{original_text}'")
     # Remove brackets from original text to match mapping
     cleaned_text = remove_brackets(original_text)
     
     # Look up Hebrew translation
-    if cleaned_text in mapping:
+    if '\n' in cleaned_text:
+        # Handle multi-line text
+        lines = cleaned_text.split('\n')
+        translated_lines = []
+        for line in lines:
+            line = line.strip()
+            if line in mapping:
+                translated_lines.append(mapping[line])
+            else:
+                print(f"Warning: Translation not found for line: '{line[:50]}...'")
+                translated_lines.append(line)  # Keep original line if no translation
+        msg['text'] = '\n'.join(translated_lines)
+        translated_count += 1
+    elif cleaned_text in mapping:
         msg['text'] = mapping[cleaned_text]
         translated_count += 1
     else:

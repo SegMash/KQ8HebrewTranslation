@@ -67,16 +67,37 @@ def fix_first_line_zeros(src_dir, tgt_dir):
             # Set first line to zeros (black RGB)
             arr[0, :] = [0, 0, 0]  # RGB black
             empty_cols=count_empty_columns(arr)
+
+            # Adjust columns if needed
+            if empty_cols < 2:
+                # Pad with 4 empty cols (2 left, 2 right)
+                height, width = arr.shape[:2]
+                new_arr = np.zeros((height, width + 4, 3), dtype=arr.dtype)
+                new_arr[:, 2:width+2] = arr
+                arr = new_arr
+                empty_cols = count_empty_columns(arr)
+            elif empty_cols > 5:
+                # Remove cols in multiples of 4 until empty_cols < 6
+                while empty_cols > 5:
+                    cols_to_remove = min(4, ((empty_cols - 5) // 4 + 1) * 4)
+                    left_remove = cols_to_remove // 2
+                    right_remove = cols_to_remove // 2
+                    height, width = arr.shape[:2]
+                    arr = arr[:, left_remove:width-right_remove]
+                    empty_cols = count_empty_columns(arr)
+            
+            width_orig = arr.shape[1]
+            
             #print(f"Processing {fname}: width={width_orig}, empty_columns={empty_cols}")
             required_x_left = 0
-            if width_orig == 12:
+            if width_orig >= 12:
                 if empty_cols == 5:
-                    required_x_left=2
+                    required_x_left=3
                 elif empty_cols == 4:
                     required_x_left = 3
-                elif empty_cols == 2:
+                elif empty_cols == 2 or empty_cols == 3:
                     required_x_left = 4
-            else: #8
+            elif width_orig == 8:
                 if empty_cols == 2:
                     required_x_left = 4
                 elif empty_cols == 3:
@@ -89,24 +110,12 @@ def fix_first_line_zeros(src_dir, tgt_dir):
                     required_x_left = 3
                 elif empty_cols == 1:
                     required_x_left = 4
+
+            if "098" in fname:
+                print(f"Debug: Processing {fname} with width {width_orig} and empty columns {empty_cols} and required_x_left {required_x_left}")
+                
             # Find top-left pixel
             top_left_x, top_left_y, rgb_color = find_top_left_pixel(arr)
-            #if top_left_y < top_left_x:
-            #    print(f"fname={fname}")
-            #    # Padding needed to shift glyph left
-            #    shift_amount = top_left_x-top_left_y
-            #    # Shift the bitmap left by shift_amount pixels
-            #    height, width = arr.shape[:2]
-            #    shifted_arr = np.zeros_like(arr)
-            #    shifted_arr[:, :] = [0, 0, 0]  # Fill with black background
-            #    # Copy pixels shifted to the left
-            #    for y in range(height):
-            #        for x in range(width):
-            #            new_x = x - shift_amount
-            #            if new_x >= 0:  # Only copy if new position is within bounds
-            #                shifted_arr[y, new_x] = arr[y, x]
-            #    
-            #    arr = shifted_arr
             shift_amount = required_x_left
             
             # Create a wider bitmap to accommodate the shift

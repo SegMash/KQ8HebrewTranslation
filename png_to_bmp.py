@@ -71,27 +71,74 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
             color1=172
             color2=172
             color3=54
+        elif palette_name == "barren":
+            color1=179
+            color2=179
+            color3=37
+        elif palette_name == "iceworld":
+            color1=228
+            color2=228
+            color3=169
+        elif palette_name == "snowexit":
+            color1=205
+            color2=205
+            color3=104
+        elif "temple" in palette_name:
+            color1=225
+            color2=225
+            color3=14
+        elif "45" in palette_name:
+            color1=153
+            color2=153
+            color3=153
+        elif "27" in palette_name:
+            color1=153
+            color2=153
+            color3=153
         else:
             raise ValueError(f"Invalid palette name: {palette_name}. Must be 'daventry' or 'castle'.")
         
+        
         # Daventry palette mappings
-        pixel_data = [0 if pixel < 10 else pixel for pixel in pixel_data]
-        pixel_data = [10 if pixel == 127 else pixel for pixel in pixel_data]
-        pixel_data = [10 if pixel == 195 else pixel for pixel in pixel_data]
-        pixel_data = [color1 if pixel == 172 else pixel for pixel in pixel_data]
-        pixel_data = [color1 if pixel == 202 else pixel for pixel in pixel_data]
-        pixel_data = [color1 if pixel == 213 else pixel for pixel in pixel_data]
-        pixel_data = [color2 if pixel == 196 else pixel for pixel in pixel_data]
-        pixel_data = [color1 if pixel == 147 else pixel for pixel in pixel_data]
-        pixel_data = [color1 if pixel == 134 else pixel for pixel in pixel_data]
-        pixel_data = [color3 if pixel == 137 else pixel for pixel in pixel_data]
+        if "27" in palette_name:
+            pixel_data = [
+                12 if pixel >= 220 else
+                16 if pixel >= 200 else
+                20 if pixel >= 180 else
+                24 if pixel >= 160 else
+                119 if pixel >= 140 else
+                159 if pixel >= 100 else
+                153 if pixel >= 10 else
+                0 if pixel < 10 else
+                pixel 
+                for pixel in pixel_data
+            ]
+        #else:
+            pixel_data = [
+                0 if pixel < 10 else
+                10 if pixel == 127 or pixel == 195 else
+                color1 if pixel in (172, 202, 213, 147, 134) else
+                color2 if pixel == 196 else
+                color3 if pixel == 137 else
+                pixel
+                for pixel in pixel_data
+            ]
+
+        if "45" in palette_name:
+            pixel_data = [193 if pixel == 255 else pixel for pixel in pixel_data]
+        if "27" in palette_name:
+            pixel_data = [153 if pixel == 255 else pixel for pixel in pixel_data]
         
         
         
         
         # Set pixel (0,0) to width * height (KQ8 font format requirement)
         dimension_encoding = width * height
-        pixel_data[0] = dimension_encoding
+        if dimension_encoding > 255:
+            pixel_data[0] = dimension_encoding % 256  # Remainder in (0,0)
+            pixel_data[1] = dimension_encoding // 256  # Quotient in (1,0)
+        else:
+            pixel_data[0] = dimension_encoding
         
         # Create new image with modified data
         output_img = Image.new('L', (width, height))

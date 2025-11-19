@@ -1,7 +1,9 @@
 __pycache__
 .vscode
-bitmaps
+bitmaps*
 font
+*/*.MSG
+*/*.png
 hebrew_letters
 output
 tools/__pycache__
