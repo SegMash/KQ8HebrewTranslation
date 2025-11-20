@@ -111,8 +111,8 @@ def fix_first_line_zeros(src_dir, tgt_dir):
                 elif empty_cols == 1:
                     required_x_left = 4
 
-            if "098" in fname:
-                print(f"Debug: Processing {fname} with width {width_orig} and empty columns {empty_cols} and required_x_left {required_x_left}")
+            #if "098" in fname:
+            #    print(f"Debug: Processing {fname} with width {width_orig} and empty columns {empty_cols} and required_x_left {required_x_left}")
                 
             # Find top-left pixel
             top_left_x, top_left_y, rgb_color = find_top_left_pixel(arr)

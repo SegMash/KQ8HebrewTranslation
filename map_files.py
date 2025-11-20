@@ -56,7 +56,10 @@ def map_files(input1_path, input2_path, output_path, max_length):
                         line2 = ""
                     
                     # Write the mapping
-                    line2 = split_string(line2, max_length, False)
+                    if "500" in output_path:
+                        line2 = split_string(line2, 100000, False)
+                    else:
+                        line2 = split_string(line2, max_length, False)
                     output_file.write(f"{line1} === {line2}\n")
         
         print(f"Mapping file created successfully: {output_path}")

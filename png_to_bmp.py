@@ -95,25 +95,71 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
             color1=153
             color2=153
             color3=153
+        elif "36" in palette_name:
+            color1=153
+            color2=153
+            color3=153
+        elif "20" in palette_name:
+            color1=153
+            color2=153
+            color3=153
+        elif "console" in palette_name:
+            color1=153
+            color2=153
+            color3=153
         else:
             raise ValueError(f"Invalid palette name: {palette_name}. Must be 'daventry' or 'castle'.")
         
         
         # Daventry palette mappings
-        if "27" in palette_name:
+        if   ("console" in palette_name and "consolel" not in palette_name and "consoles" not in palette_name) \
+            or ("45" in palette_name and "sl" not in palette_name) \
+            or ("36" in palette_name and "sl" not in palette_name) \
+            or ("27" in palette_name and "sl" not in palette_name) \
+            or ("20" in palette_name and "sl" not in palette_name):
             pixel_data = [
-                12 if pixel >= 220 else
-                16 if pixel >= 200 else
+                14 if pixel >= 250 else
+                13 if pixel >= 240 else
+                11 if pixel >= 230 else
+                16 if pixel >= 220 else
+                17 if pixel >= 210 else
+                18 if pixel >= 200 else
+                19 if pixel >= 190 else
                 20 if pixel >= 180 else
+                21 if pixel >= 170 else
                 24 if pixel >= 160 else
                 119 if pixel >= 140 else
                 159 if pixel >= 100 else
-                153 if pixel >= 10 else
+                153 if pixel > 50 else
+                57 if pixel == 49 else
+                0 if pixel < 49 else
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif "20sl" in palette_name or "36sl" in palette_name or "27sl" in palette_name or "45sl" in palette_name:
+            pixel_data = [
+                127 if pixel >= 200 else
+                221 if pixel >= 150 else
+                195 if pixel >= 10 else
                 0 if pixel < 10 else
                 pixel 
                 for pixel in pixel_data
             ]
-        #else:
+        elif "consolel" in palette_name or "consoles" in palette_name:
+            pixel_data = [
+                239 if pixel >= 240 else
+                237 if pixel >= 210 else
+                235 if pixel >= 180 else
+                233 if pixel >= 150 else
+                197 if pixel >= 120 else
+                196 if pixel >= 100 else
+                186 if pixel >= 50 else
+                10 if pixel == 49 else
+                0 if pixel < 49 else
+                pixel 
+                for pixel in pixel_data
+            ]
+        else:
             pixel_data = [
                 0 if pixel < 10 else
                 10 if pixel == 127 or pixel == 195 else
@@ -124,10 +170,7 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
                 for pixel in pixel_data
             ]
 
-        if "45" in palette_name:
-            pixel_data = [193 if pixel == 255 else pixel for pixel in pixel_data]
-        if "27" in palette_name:
-            pixel_data = [153 if pixel == 255 else pixel for pixel in pixel_data]
+        
         
         
         

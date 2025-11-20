@@ -4,7 +4,13 @@ REM Translation workflow script for KQ8 Hebrew Translation
 REM Loops through game locations and runs repeated commands
 
 set GAME_PATH=C:\Games\KQ8
+set BACKUP_PATH=C:\Games\Backup\KQ8
 set GLYPHS_FIXED=.\glyphs_fixed
+set GLYPHS_FIXED_CONSOLE=.\glyphs_fixed_console
+set GLYPHS_FIXED_20=.\glyphs_fixed_20
+set GLYPHS_FIXED_27=.\glyphs_fixed_27
+set GLYPHS_FIXED_36=.\glyphs_fixed_36
+set GLYPHS_FIXED_45=.\glyphs_fixed_45
 
 echo ========================================
 echo KQ8 Hebrew Translation Workflow
@@ -12,6 +18,26 @@ echo ========================================
 echo.
 
 python.exe .\fix_glyph.py .\glyphs_8 %GLYPHS_FIXED%
+python.exe .\fix_glyph.py .\glyphs_16_15 %GLYPHS_FIXED_CONSOLE%
+python.exe .\fix_glyph.py .\glyphs_16_21 %GLYPHS_FIXED_20%
+python.exe .\fix_glyph.py .\glyphs_24_38 %GLYPHS_FIXED_27%
+python.exe .\fix_glyph.py .\glyphs_24_38 %GLYPHS_FIXED_36%
+python.exe .\fix_glyph.py .\glyphs_32_46 %GLYPHS_FIXED_45%
+
+REM ========================================
+REM 0. Restore Font Files from Backup
+REM ========================================
+echo [0/5] Restoring font files from backup...
+echo.
+
+for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit temple1 temple2 temple3 temple4) do (
+    echo Copying %%L fonts...
+    xcopy /Y "%BACKUP_PATH%\%%L\8gui\*.pft" "%GAME_PATH%\%%L\8gui\"
+)
+echo Copying GAME fonts...
+xcopy /Y "%BACKUP_PATH%\GAME\8Gui\*.pft" "%GAME_PATH%\GAME\8Gui\"
+echo.
+
 REM ========================================
 REM 1. Parse Font Files
 REM ========================================
@@ -22,6 +48,20 @@ for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit templ
     echo Processing %%L...
     python.exe .\parse_font.py %GAME_PATH%\%%L\8gui\console.pft %%L\bitmaps
 )
+
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\consoleg.pft .\GAME\bitmaps_consoleg
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\consolel.pft .\GAME\bitmaps_consolel
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\consoles.pft .\GAME\bitmaps_consoles
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\20.pft .\GAME\bitmaps_20
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\20sl.pft .\GAME\bitmaps_20sl
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\20black.pft .\GAME\bitmaps_20black
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\27.pft .\GAME\bitmaps_27
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\27sl.pft .\GAME\bitmaps_27sl
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\36.pft .\GAME\bitmaps_36
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\36sl.pft .\GAME\bitmaps_36sl
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\45.pft .\GAME\bitmaps_45
+python.exe .\parse_font.py %GAME_PATH%\GAME\8Gui\45sl.pft .\GAME\bitmaps_45sl
+
 for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit temple1 temple2 temple3 temple4) do (
     echo Processing %%L palette...
     set "RESOURCE_DIR=%GAME_PATH%\%%L\resource"
@@ -38,7 +78,7 @@ for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit templ
 )
 echo.
 echo Now add mapping to colors in png_to_bmp.py
-pause
+rem pause
 
 REM ========================================
 REM 2. Convert PNG to BMP
@@ -50,6 +90,18 @@ for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit templ
     echo Processing %%L...
     python png_to_bmp.py %GLYPHS_FIXED% %%L .\%%L\bitmaps
 )
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_CONSOLE% console .\GAME\bitmaps_consoleg
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_20% consolel .\GAME\bitmaps_consolel
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_20% consoles .\GAME\bitmaps_consoles
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_20% 20 .\GAME\bitmaps_20
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_20% 20sl .\GAME\bitmaps_20sl
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_20% 20black .\GAME\bitmaps_20black
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_27% 27 .\GAME\bitmaps_27
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_27% 27sl .\GAME\bitmaps_27sl
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_36% 36 .\GAME\bitmaps_36
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_36% 36sl .\GAME\bitmaps_36sl
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_45% 45 .\GAME\bitmaps_45
+python.exe .\png_to_bmp.py %GLYPHS_FIXED_45% 45sl .\GAME\bitmaps_45sl
 echo.
 
 REM ========================================
@@ -62,6 +114,18 @@ for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit templ
     echo Processing %%L...
     python.exe .\create_font.py %GAME_PATH%\%%L\8gui\console_metadata.json .\%%L\bitmaps %GAME_PATH%\%%L\8gui\console.pft
 )
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoleg_metadata.json .\GAME\bitmaps_consoleg %GAME_PATH%\GAME\8Gui\consoleg.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consolel_metadata.json .\GAME\bitmaps_consolel %GAME_PATH%\GAME\8Gui\consolel.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoles_metadata.json .\GAME\bitmaps_consoles %GAME_PATH%\GAME\8Gui\consoles.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20_metadata.json .\GAME\bitmaps_20 %GAME_PATH%\GAME\8Gui\20.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20sl_metadata.json .\GAME\bitmaps_20sl %GAME_PATH%\GAME\8Gui\20sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20black_metadata.json .\GAME\bitmaps_20black %GAME_PATH%\GAME\8Gui\20black.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27_metadata.json .\GAME\bitmaps_27 %GAME_PATH%\GAME\8Gui\27.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27sl_metadata.json .\GAME\bitmaps_27sl %GAME_PATH%\GAME\8Gui\27sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36_metadata.json .\GAME\bitmaps_36 %GAME_PATH%\GAME\8Gui\36.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36sl_metadata.json .\GAME\bitmaps_36sl %GAME_PATH%\GAME\8Gui\36sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45_metadata.json .\GAME\bitmaps_45 %GAME_PATH%\GAME\8Gui\45.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45sl_metadata.json .\GAME\bitmaps_45sl %GAME_PATH%\GAME\8Gui\45sl.pft
 echo.
 
 REM ========================================
@@ -128,7 +192,9 @@ goto :end
 
 :parse_msg_csv
 echo Processing %1 (MSG %2)...
-python.exe .\parse_msg.py %1\%2.MSG %1
+echo Copying MSG file from backup...
+xcopy /Y "%BACKUP_PATH%\%1\English\%2.MSG" "%GAME_PATH%\%1\English\"
+python.exe .\parse_msg.py %GAME_PATH%\%1\English\%2.MSG %1
 goto :eof
 
 :process_csv_to_english_txt
