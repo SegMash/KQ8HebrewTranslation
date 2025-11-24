@@ -129,3 +129,8 @@ The script attempts to decode text using:
 1. Windows-1252 (primary)
 2. UTF-8 (fallback)
 3. Latin1 (final fallback)
+
+## Summerize of all fonts
+1. Game/consolel  - loading text
+2. Game/20sl - Load/Save menu buttons
+3. Game/45sl - Load/Save screen title

@@ -136,12 +136,55 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
                 pixel 
                 for pixel in pixel_data
             ]
-        elif "20sl" in palette_name or "36sl" in palette_name or "27sl" in palette_name or "45sl" in palette_name:
+        elif "36sl" in palette_name or "27sl" in palette_name:
             pixel_data = [
-                127 if pixel >= 200 else
-                221 if pixel >= 150 else
-                195 if pixel >= 10 else
-                0 if pixel < 10 else
+                252 if pixel >= 250 else
+                223 if pixel >= 240 else
+                221 if pixel >= 230 else
+                195 if pixel >= 220 else
+                194 if pixel >= 210 else
+                193 if pixel >= 200 else
+                192 if pixel >= 190 else
+                181 if pixel >= 180 else
+                178 if pixel >= 170 else
+                127 if pixel >= 160 else
+                126 if pixel >= 140 else
+                125 if pixel >= 100 else
+                124 if pixel > 50 else
+                25 if pixel == 49 else
+                0 if pixel < 49 else
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif  "45sl" in palette_name or "20sl" in palette_name:
+            pixel_data = [
+                #127 if pixel >= 250 else
+                #124 if pixel >= 240 else
+                
+                #196 if pixel >= 230 else
+                #196 if pixel >= 220 else
+                #195 if pixel >= 180 else
+                #194 if pixel >= 170 else
+                #192 if pixel >= 160 else
+                
+                #179 if pixel >= 175 else
+                #184 if pixel >= 140 else
+                #183 if pixel >= 130 else
+                #182 if pixel >= 120 else
+                #181 if pixel >= 110 else
+                #181 if pixel >= 100 else
+                #179 if pixel >= 90 else
+                #178 if pixel >= 80 else
+                #195 if pixel >= 180 else
+                #194 if pixel >= 120 else
+                #193 if pixel >= 150 else
+                #192 if pixel >= 80 else
+                #184 if pixel >= 100 else
+                #183 if pixel >= 70 else
+                #176 if pixel >= 50 else
+                
+                #58 if pixel == 49 else
+                0 if pixel < 49 else
                 pixel 
                 for pixel in pixel_data
             ]

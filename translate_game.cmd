@@ -2,6 +2,7 @@
 setlocal enabledelayedexpansion
 REM Translation workflow script for KQ8 Hebrew Translation
 REM Loops through game locations and runs repeated commands
+if not "%1"=="" if not "%2"=="" goto %1
 
 set GAME_PATH=C:\Games\KQ8
 set BACKUP_PATH=C:\Games\Backup\KQ8
