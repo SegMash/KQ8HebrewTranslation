@@ -48,174 +48,128 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
         # Get pixel data
         pixel_data = list(img.getdata())
         
-        # Apply palette-specific pixel value mappings
-        if palette_name == "daventry":
-            color1=157
-            #color2=156
-            color2=157
-            color3=76
-        elif palette_name == "castle":
-            color1=204
-            #color2=205
-            color2=204
-            color3=19
-        elif palette_name == "deadcity":
-            color1=208
-            color2=208
-            color3=16
-        elif palette_name == "swamp":
-            color1=235
-            color2=235
-            color3=34
-        elif palette_name == "gnome":
-            color1=172
-            color2=172
-            color3=54
-        elif palette_name == "barren":
-            color1=179
-            color2=179
-            color3=37
-        elif palette_name == "iceworld":
-            color1=228
-            color2=228
-            color3=169
-        elif palette_name == "snowexit":
-            color1=205
-            color2=205
-            color3=104
-        elif "temple" in palette_name:
-            color1=225
-            color2=225
-            color3=14
-        elif "45" in palette_name:
-            color1=153
-            color2=153
-            color3=153
-        elif "27" in palette_name:
-            color1=153
-            color2=153
-            color3=153
-        elif "36" in palette_name:
-            color1=153
-            color2=153
-            color3=153
-        elif "20" in palette_name:
-            color1=153
-            color2=153
-            color3=153
-        elif "console" in palette_name:
-            color1=153
-            color2=153
-            color3=153
-        else:
-            raise ValueError(f"Invalid palette name: {palette_name}. Must be 'daventry' or 'castle'.")
-        
         
         # Daventry palette mappings
-        if   ("console" in palette_name and "consolel" not in palette_name and "consoles" not in palette_name) \
-            or ("45" in palette_name and "sl" not in palette_name) \
-            or ("36" in palette_name and "sl" not in palette_name) \
-            or ("27" in palette_name and "sl" not in palette_name) \
-            or ("20" in palette_name and "sl" not in palette_name):
+        if   "consoles" in palette_name:
             pixel_data = [
-                14 if pixel >= 250 else
-                13 if pixel >= 240 else
-                11 if pixel >= 230 else
-                16 if pixel >= 220 else
-                17 if pixel >= 210 else
-                18 if pixel >= 200 else
-                19 if pixel >= 190 else
-                20 if pixel >= 180 else
-                21 if pixel >= 170 else
-                24 if pixel >= 160 else
-                119 if pixel >= 140 else
-                159 if pixel >= 100 else
-                153 if pixel > 50 else
-                57 if pixel == 49 else
-                0 if pixel < 49 else
+                124 if pixel == 123 else
+                127 if pixel == 124 else
+                124 if pixel == 122 else
+                124 if pixel == 119 else
+                195 if pixel == 159 else
+                193 if pixel == 154 else
+                25 if pixel == 209 else #shadow
                 pixel 
                 for pixel in pixel_data
             ]
-        elif "36sl" in palette_name or "27sl" in palette_name:
+        elif   "daventry" in palette_name:
             pixel_data = [
-                252 if pixel >= 250 else
-                223 if pixel >= 240 else
-                221 if pixel >= 230 else
-                195 if pixel >= 220 else
-                194 if pixel >= 210 else
-                193 if pixel >= 200 else
-                192 if pixel >= 190 else
-                181 if pixel >= 180 else
-                178 if pixel >= 170 else
-                127 if pixel >= 160 else
-                126 if pixel >= 140 else
-                125 if pixel >= 100 else
-                124 if pixel > 50 else
-                25 if pixel == 49 else
-                0 if pixel < 49 else
+                157 if pixel == 123 else
+                157 if pixel == 124 else
+                157 if pixel == 122 else
+                156 if pixel == 119 else
+                142 if pixel == 159 else
+                221 if pixel == 154 else
+                10 if pixel == 209 else #shadow
                 pixel 
                 for pixel in pixel_data
             ]
-        elif  "45sl" in palette_name or "20sl" in palette_name:
+        elif "castled" in palette_name:
             pixel_data = [
-                #127 if pixel >= 250 else
-                #124 if pixel >= 240 else
-                
-                #196 if pixel >= 230 else
-                #196 if pixel >= 220 else
-                #195 if pixel >= 180 else
-                #194 if pixel >= 170 else
-                #192 if pixel >= 160 else
-                
-                #179 if pixel >= 175 else
-                #184 if pixel >= 140 else
-                #183 if pixel >= 130 else
-                #182 if pixel >= 120 else
-                #181 if pixel >= 110 else
-                #181 if pixel >= 100 else
-                #179 if pixel >= 90 else
-                #178 if pixel >= 80 else
-                #195 if pixel >= 180 else
-                #194 if pixel >= 120 else
-                #193 if pixel >= 150 else
-                #192 if pixel >= 80 else
-                #184 if pixel >= 100 else
-                #183 if pixel >= 70 else
-                #176 if pixel >= 50 else
-                
-                #58 if pixel == 49 else
-                0 if pixel < 49 else
+                204 if pixel == 123 else
+                204 if pixel == 124 else
+                204 if pixel == 122 else
+                205 if pixel == 119 else
+                182 if pixel == 159 else
+                183 if pixel == 154 else
+                10 if pixel == 209 else #shadow
                 pixel 
                 for pixel in pixel_data
             ]
-        elif "consolel" in palette_name or "consoles" in palette_name:
+        elif "deadcity" in palette_name:
             pixel_data = [
-                239 if pixel >= 240 else
-                237 if pixel >= 210 else
-                235 if pixel >= 180 else
-                233 if pixel >= 150 else
-                197 if pixel >= 120 else
-                196 if pixel >= 100 else
-                186 if pixel >= 50 else
-                10 if pixel == 49 else
-                0 if pixel < 49 else
+                207 if pixel == 123 else
+                208 if pixel == 124 else
+                208 if pixel == 122 else
+                209 if pixel == 119 else
+                108 if pixel == 159 else
+                109 if pixel == 154 else
+                10 if pixel == 209 else #shadow
                 pixel 
                 for pixel in pixel_data
             ]
-        else:
+        elif "swamp" in palette_name:
             pixel_data = [
-                0 if pixel < 10 else
-                10 if pixel == 127 or pixel == 195 else
-                color1 if pixel in (172, 202, 213, 147, 134) else
-                color2 if pixel == 196 else
-                color3 if pixel == 137 else
-                pixel
+                235 if pixel == 123 else
+                235 if pixel == 124 else
+                230 if pixel == 122 else
+                231 if pixel == 119 else
+                230 if pixel == 159 else
+                112 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
                 for pixel in pixel_data
             ]
-
-        
-        
-        
+        elif "gnome" in palette_name:
+            pixel_data = [
+                232 if pixel == 123 else
+                172 if pixel == 124 else
+                172 if pixel == 122 else
+                171 if pixel == 119 else
+                231 if pixel == 159 else
+                167 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif "barren" in palette_name:
+            pixel_data = [
+                235 if pixel == 123 else
+                179 if pixel == 124 else
+                179 if pixel == 122 else
+                180 if pixel == 119 else
+                161 if pixel == 159 else
+                167 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif "iceworld" in palette_name:
+            pixel_data = [
+                245 if pixel == 123 else
+                228 if pixel == 124 else
+                228 if pixel == 122 else
+                229 if pixel == 119 else
+                192 if pixel == 159 else
+                128 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif "snowexit" in palette_name:
+            pixel_data = [
+                205 if pixel == 123 else
+                205 if pixel == 124 else
+                206 if pixel == 122 else
+                212 if pixel == 119 else
+                213 if pixel == 159 else
+                218 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
+                for pixel in pixel_data
+            ]
+        elif "temple" in palette_name:
+            pixel_data = [
+                229 if pixel == 123 else
+                225 if pixel == 124 else
+                220 if pixel == 122 else
+                169 if pixel == 119 else
+                176 if pixel == 159 else
+                230 if pixel == 154 else
+                10 if pixel == 209 else #shadow
+                pixel 
+                for pixel in pixel_data
+            ]
         
         
         # Set pixel (0,0) to width * height (KQ8 font format requirement)

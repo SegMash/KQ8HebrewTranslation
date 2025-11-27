@@ -3,7 +3,6 @@ __pycache__
 bitmaps*
 font
 */*.MSG
-*/*.png
 hebrew_letters
 output
 tools/__pycache__
@@ -18,3 +17,19 @@ output_kq3/
 */*_mapping.txt
 glyphs_fixed
 patch
+glyphs_16_21
+glyphs_16_21_l
+glyphs_16_21_sl
+glyphs_24_38
+glyphs_32_46
+glyphs_32_46_sl
+glyphs_fixed_20
+glyphs_fixed_20_sl
+glyphs_fixed_27
+glyphs_fixed_36
+glyphs_fixed_45
+glyphs_fixed_45_sl
+glyphs_fixed_console
+glyphs_fixed_consolel
+glyphs_fixed_console_menu
+glyphs_fixed_consolel_menu

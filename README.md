@@ -131,6 +131,14 @@ The script attempts to decode text using:
 3. Latin1 (final fallback)
 
 ## Summerize of all fonts
-1. Game/consolel  - loading text
-2. Game/20sl - Load/Save menu buttons
-3. Game/45sl - Load/Save screen title
+1. Game/consolel(16X21) FRNEW - loading screen text  #colors: #236,238,241,186,188 (shadow=10)
+2. Game/20sl(16X21) -FRNEW Load/Save menu buttons #127,124,194,125,192 (shadow=25) 
+3. Game/45sl(32X46) FRNEW - Load/Save screen title #127,124,199,197,195,192,125,110,88,(25?) (shadow=58)
+4. Game/45(32X46)-FRNEW-Title Options screen   #14,17,16,21,114,115,116,159,153,136,137,138,139 (shadow=46)
+5. Game/36(32X38)-FRNEW- Menu & Options #11,13,15,119,116,159,153,154,136,135,26,29,39,24 (shadow=46)
+6. Game/27(32X38)-FRNEW- Menu & Options  #11,13,15,119,116,159,153,154,136,135,26,29,39,24 (shadow=46)
+7. Game/20(16X21)-FRNEW- Menu small items #14,17,16,21,114,115,116,159,153,136,137,138,139 (shadow=46)
+8. Game/consoleg(12X15) - menu questions 123,124,122,119,154,159 shadow=209
+9. console
+
+

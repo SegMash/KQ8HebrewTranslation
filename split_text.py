@@ -16,7 +16,7 @@ def calculate_weighted_length(text: str) -> float:
     """
     length = 0.0
     for char in text:
-        if char in ['.',"'",':']:
+        if char in ['.',"'",':','~']:
             length += 0.25
         elif char in [' ', ',',';','"','-','!']:
             length += 0.5
@@ -80,7 +80,7 @@ def split_string_by_length_internal(input_string: str, max_length: int, debug: b
         # Advance character by character until we reach max weighted length
         while chunk_end < len(input_string) and current_weighted_length < max_length:
             char = input_string[chunk_end]
-            if char in ["'",'.',':']:
+            if char in ["'",'.',':','~']:
                 char_weight = 0.25
             elif char in [' ', ',',';','"','-','!']:
                 char_weight = 0.5
@@ -170,11 +170,19 @@ def split_string(input: str, max_length: int, debug: bool = True):
                     prev_chunk = ' ' + prev_chunk + ' '
                     padding_to_add += 1
             # Calculate padding chars for each side (before and after)
-            
+            padding_chars = padding_chars * 2
             prev_chunk = '~' * padding_chars + prev_chunk + '~' * padding_chars
             padding_to_add += padding_chars
             if (padding_to_add > padding_needed):
-                prev_chunk = prev_chunk.replace(' ', '', 1)
+                prev_chunk = prev_chunk.replace('~', '', 1)
+                padding_to_add -= 0.5
+            if (padding_to_add > padding_needed):
+                prev_chunk = prev_chunk.replace('~', '', 1)
+            more_padding_needed = (int)((26 - calculate_weighted_length(prev_chunk))*2)
+            #print(f"Debug: more_padding_needed={more_padding_needed:.2f}")
+            prev_chunk = '~' * more_padding_needed + prev_chunk + '~' * more_padding_needed
+            #print(f"Now calculate_weighted_length(prev_chunk) = {calculate_weighted_length(prev_chunk)}")
+            #print(f"After padding: {prev_chunk} {padding_needed}")
             chunks[prev_chunk_index] = prev_chunk
             prev_chunk = chunk
             prev_chunk_index = chunk_index
@@ -201,7 +209,12 @@ def split_string(input: str, max_length: int, debug: bool = True):
 
 if __name__ == "__main__":
     # Parse command line arguments
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
+        input_string = sys.argv[1]
+        max_length = int(sys.argv[2])
+        result = split_string(input_string, max_length, True)
+        print(f"Result: '{result}'")
+    elif len(sys.argv) == 2:
         max_length = int(sys.argv[1])
         # No arguments - run test cases with default values
         result = split_string("אני לא יודע את הרוע המשעבד אותך, שרה, אבל אני נשבע להביס אותו ולשחרר את נשמתך המתוקה.", max_length, True)
@@ -262,5 +275,7 @@ if __name__ == "__main__":
         result = split_string("אהה! יש לי את זה! הדיפיברילטור האלקטרומגנטי הטרה-קוסמי שלי! בעזרתו, אוכל להזיז את הקוטב המגנטי של כדור הארץ במעט... ולננו-שנייה בלבד. אבל זה יספיק! זה יערים על המפה שלך ויספק נקודת מסע חדשה. הקושי היחיד הוא...", max_length, True)
         print(f"Test 4 Result: '{result}'")
 
-        result = split_string("מה פתאום, חייב להיות, הוד מלכותך! מסעי ברור: עליי לנדוד לממלכת השמש ולהשיב את מסכת הנצח.", max_length, True)
+        result = split_string("נדדתי למרחקים בחיפוש אחר מסכת הנצח. אך אני חושש שמאמציי עלו בתוהו; איני יודע לאן ללכת.", max_length, True)
         print(f"Test 4 Result: '{result}'")
+
+        

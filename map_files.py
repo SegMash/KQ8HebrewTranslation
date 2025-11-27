@@ -45,6 +45,10 @@ def map_files(input1_path, input2_path, output_path, max_length):
                 line1 = lines1[i].rstrip('\n\r')  # Remove newlines but keep content
                 line2 = lines2[i].rstrip('\n\r')  # Remove newlines but keep content
                 
+                # Skip lines that start with ###IGNORE### in the Hebrew file
+                if line2.startswith('###IGNORE###'):
+                    continue
+                
                 # Handle empty lines - if both lines are empty, write empty line
                 if not line1.strip() and not line2.strip():
                     output_file.write("\n")
@@ -56,8 +60,9 @@ def map_files(input1_path, input2_path, output_path, max_length):
                         line2 = ""
                     
                     # Write the mapping
-                    if "500" in output_path:
-                        line2 = split_string(line2, 100000, False)
+                    if "500" in output_path and not "5000" in output_path:
+                        #line2 = split_string(line2, 100000, False)
+                        line2 = split_string(line2, max_length, False)
                     else:
                         line2 = split_string(line2, max_length, False)
                     output_file.write(f"{line1} === {line2}\n")
