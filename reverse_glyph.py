@@ -100,9 +100,9 @@ def reverse_glyph(input_path, output_path, mask_output_path=None, fixed_width=No
         arr = shift_image_left_and_wrap_indexed(arr, 2)
     
     # Step 4: Change all pixels with color 58 to 0
-    arr[arr == 58] = 0
-    arr[arr < 120] = 0
-    arr[arr > 221] = 0
+    #arr[arr == 58] = 0
+    #arr[arr < 120] = 0
+    #arr[arr > 221] = 0
     
     # Step 4.5: Create mask image before padding (all non-zero colors become 255)
     if mask_output_path is not None:

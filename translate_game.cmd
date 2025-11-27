@@ -15,6 +15,7 @@ set GLYPHS_FIXED_27=.\glyphs_fixed_27
 set GLYPHS_FIXED_36=.\glyphs_fixed_36
 set GLYPHS_FIXED_45=.\glyphs_fixed_45
 set GLYPHS_FIXED_45_SL=.\glyphs_fixed_45_sl
+set PATCH=.\patch
 
 echo ========================================
 echo KQ8 Hebrew Translation Workflow
@@ -117,19 +118,21 @@ echo.
 
 for %%L in (daventry castled deadcity swamp gnome barren iceworld snowexit temple1 temple2 temple3 temple4) do (
     echo Processing %%L...
-    python.exe .\create_font.py %GAME_PATH%\%%L\8gui\console_metadata.json .\%%L\bitmaps %GAME_PATH%\%%L\8gui\console.pft
+    if not exist "%PATCH%\%%L\8gui" mkdir "%PATCH%\%%L\8gui"
+    python.exe .\create_font.py %GAME_PATH%\%%L\8gui\console_metadata.json .\%%L\bitmaps %PATCH%\%%L\8gui\console.pft
 )
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoleg_metadata.json .\GAME\bitmaps_consoleg %GAME_PATH%\GAME\8Gui\consoleg.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoleg_metadata.json .\GAME\bitmaps_consoles %GAME_PATH%\GAME\8Gui\consoles.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consolel_metadata.json .\GAME\bitmaps_consolel %GAME_PATH%\GAME\8Gui\consolel.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20_metadata.json .\GAME\bitmaps_20 %GAME_PATH%\GAME\8Gui\20.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20sl_metadata.json .\GAME\bitmaps_20sl %GAME_PATH%\GAME\8Gui\20sl.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27_metadata.json .\GAME\bitmaps_27 %GAME_PATH%\GAME\8Gui\27.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27sl_metadata.json .\GAME\bitmaps_27sl %GAME_PATH%\GAME\8Gui\27sl.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36_metadata.json .\GAME\bitmaps_36 %GAME_PATH%\GAME\8Gui\36.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36sl_metadata.json .\GAME\bitmaps_36sl %GAME_PATH%\GAME\8Gui\36sl.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45_metadata.json .\GAME\bitmaps_45 %GAME_PATH%\GAME\8Gui\45.pft
-python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45sl_metadata.json .\GAME\bitmaps_45sl %GAME_PATH%\GAME\8Gui\45sl.pft
+if not exist "%PATCH%\GAME\8Gui" mkdir "%PATCH%\GAME\8Gui"
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoleg_metadata.json .\GAME\bitmaps_consoleg %PATCH%\GAME\8Gui\consoleg.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consoleg_metadata.json .\GAME\bitmaps_consoles %PATCH%\GAME\8Gui\consoles.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\consolel_metadata.json .\GAME\bitmaps_consolel %PATCH%\GAME\8Gui\consolel.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20_metadata.json .\GAME\bitmaps_20 %PATCH%\GAME\8Gui\20.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\20sl_metadata.json .\GAME\bitmaps_20sl %PATCH%\GAME\8Gui\20sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27_metadata.json .\GAME\bitmaps_27 %PATCH%\GAME\8Gui\27.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\27sl_metadata.json .\GAME\bitmaps_27sl %PATCH%\GAME\8Gui\27sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36_metadata.json .\GAME\bitmaps_36 %PATCH%\GAME\8Gui\36.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\36sl_metadata.json .\GAME\bitmaps_36sl %PATCH%\GAME\8Gui\36sl.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45_metadata.json .\GAME\bitmaps_45 %PATCH%\GAME\8Gui\45.pft
+python.exe .\create_font.py %GAME_PATH%\GAME\8Gui\45sl_metadata.json .\GAME\bitmaps_45sl %PATCH%\GAME\8Gui\45sl.pft
 echo.
 
 REM ========================================
@@ -186,7 +189,14 @@ call :hebrew_txt_to_MSG barren 5000
 call :hebrew_txt_to_MSG iceworld 6000
 call :hebrew_txt_to_MSG temple1 7000
 echo.
+python.exe .\reverse_glyph.py .\GAME\bitmaps_20 bitmap_credit
+python.exe .\extract_bmp_from_pbm.py %GAME_PATH%\GAME\8Gui\main18.pbm main18.bmp
+python.exe .\draw_text_on_bitmap.py .\main18.bmp credit_text.txt bitmap_credit 788 570 mainOutput.bmp
 
+if not exist "%PATCH%\GAME\8Gui" mkdir "%PATCH%\GAME\8Gui"
+xcopy /Y %GAME_PATH%\GAME\8Gui\main18.pbm "%PATCH%\GAME\8Gui\"
+python .\replace_bmp_in_pbm.py %PATCH%\GAME\8Gui\main18.pbm mainOutput.bmp
+makensis.exe KQ8_Hebrew_Patch.nsi
 REM ========================================
 REM 7. End
 REM ========================================
@@ -212,10 +222,12 @@ goto :eof
 echo Processing %1 (MSG %2)...
 python map_files.py %1\%2_messages_english.txt %1\%2_messages_hebrew.txt %1\%2_mapping.txt 26
 python translate_csv.py %1\%2_messages.csv %1\%2_mapping.txt %1\%2_messages_hebrew.csv
-python create_msg.py %1\%2_messages_hebrew.csv %GAME_PATH%\%1\English\%2.MSG
+if not exist "%PATCH%\%1\English" mkdir "%PATCH%\%1\English"
+python create_msg.py %1\%2_messages_hebrew.csv %PATCH%\%1\English\%2.MSG
 if "%2"=="7000" (
     echo Running additional command for temple2...
-    python create_msg.py %1\%2_messages_hebrew.csv %GAME_PATH%\temple2\English\%2%.MSG
+    if not exist "%PATCH%\temple2\English" mkdir "%PATCH%\temple2\English"
+    python create_msg.py %1\%2_messages_hebrew.csv %PATCH%\temple2\English\%2%.MSG
 )
 
 goto :eof
