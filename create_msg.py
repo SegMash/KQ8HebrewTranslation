@@ -53,7 +53,8 @@ def create_msg_file(csv_filename, output_filename):
         # Encode text to bytes
         try:
             # Try to encode with windows-1252 first (original encoding)
-            text_bytes = message['text'].encode('CP862')
+            text_bytes = message['text'].encode('Windows-1255')
+            #text_bytes = message['text'].encode('CP862')
         except UnicodeEncodeError:
             try:
                 # Fallback to UTF-8

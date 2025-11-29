@@ -190,6 +190,8 @@ call :hebrew_txt_to_MSG iceworld 6000
 call :hebrew_txt_to_MSG temple1 7000
 echo.
 python.exe .\reverse_glyph.py .\GAME\bitmaps_20 bitmap_credit
+if exist main18.bmp del main18.bmp
+if exist mainOutput.bmp del mainOutput.bmp
 python.exe .\extract_bmp_from_pbm.py %GAME_PATH%\GAME\8Gui\main18.pbm main18.bmp
 python.exe .\draw_text_on_bitmap.py .\main18.bmp credit_text.txt bitmap_credit 788 570 mainOutput.bmp
 

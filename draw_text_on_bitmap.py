@@ -3,9 +3,9 @@
 Draw Hebrew text on a bitmap by compositing individual letter bitmaps.
 Hebrew is Right-To-Left, so letters are drawn from right to left.
 
-The script maps Hebrew characters to bitmap files using CP862 encoding:
-  CP862 code - 32 = bitmap number
-  Example: א (CP862: 128) -> 128 - 32 = 96 -> bitmap_096.bmp
+The script maps Hebrew characters to bitmap files using Windows-1255 encoding:
+  Windows-1255 code - 32 = bitmap number
+  Example: א (Windows-1255: 128) -> 128 - 32 = 96 -> bitmap_096.bmp
 
 Usage: python draw_text_on_bitmap.py <main_bitmap> <text> <letters_folder> <x> <y>
 """
@@ -17,22 +17,22 @@ from PIL import Image
 
 def get_bitmap_index(char):
     """
-    Get the bitmap index for a character using CP862 encoding.
+    Get the bitmap index for a character using Windows-1255 encoding.
     
     Args:
         char: Single character
         
     Returns:
-        Bitmap index (CP862 code - 32)
+        Bitmap index (Windows-1255 code - 32)
     """
-    # Encode the character using CP862 and get its byte value
+    # Encode the character using Windows-1255 and get its byte value
     try:
-        cp862_code = char.encode('cp862')[0]
+        win1255_code = char.encode('windows-1255')[0]
     except (UnicodeEncodeError, IndexError):
-        # If character cannot be encoded in CP862, fall back to ord()
-        cp862_code = ord(char)
+        # If character cannot be encoded in Windows-1255, fall back to ord()
+        win1255_code = ord(char)
     
-    return cp862_code - 32
+    return win1255_code - 32
 
 
 def draw_text_on_bitmap(main_bitmap_path, text, letters_folder, start_x, start_y, output_path=None):
@@ -94,10 +94,10 @@ def draw_text_on_bitmap(main_bitmap_path, text, letters_folder, start_x, start_y
             # Check if letter bitmap exists
             if not os.path.exists(letter_filename):
                 try:
-                    cp862_code = char.encode('cp862')[0]
+                    win1255_code = char.encode('windows-1255')[0]
                 except:
-                    cp862_code = ord(char)
-                print(f"Warning: Letter bitmap not found: {letter_filename} (char: '{char}', CP862: {cp862_code})")
+                    win1255_code = ord(char)
+                print(f"Warning: Letter bitmap not found: {letter_filename} (char: '{char}', windows-1255: {win1255_code})")
                 continue
             
             # Load the letter bitmap
@@ -118,11 +118,11 @@ def draw_text_on_bitmap(main_bitmap_path, text, letters_folder, start_x, start_y
             paste_y = current_y
             
             try:
-                cp862_code = char.encode('cp862')[0]
+                win1255_code = char.encode('windows-1255')[0]
             except:
-                cp862_code = ord(char)
+                win1255_code = ord(char)
             
-            print(f"Character {i+1}: '{char}' (CP862: {cp862_code}) -> bitmap_{bitmap_index:03d}.bmp")
+            print(f"Character {i+1}: '{char}' (windows-1255: {win1255_code}) -> bitmap_{bitmap_index:03d}.bmp")
             print(f"  Letter size: {letter_width}x{letter_height}")
             print(f"  Paste position: ({paste_x}, {paste_y})")
             
@@ -220,8 +220,8 @@ def main():
         print("  output         - Optional output path (defaults to overwriting main_bitmap)")
         print()
         print("Letter bitmap naming:")
-        print("  Character CP862 code - 32 = bitmap index")
-        print("  Example: א (CP862: 128) -> bitmap_096.bmp")
+        print("  Character Windows-1255 code - 32 = bitmap index")
+        print("  Example: א (Windows-1255: 128) -> bitmap_096.bmp")
         print()
         print("Example:")
         print("  python draw_text_on_bitmap.py main.bmp credit_text.txt bitmap_credit 400 300")

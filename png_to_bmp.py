@@ -186,6 +186,17 @@ def convert_png_to_bmp(png_file, output_dir="bitmaps", palette_name="daventry", 
         
         # Generate output filename
         base_name = os.path.splitext(os.path.basename(png_file))[0]
+
+        # If bitmap number is between 096 and 122, add 96
+        if base_name.startswith('bitmap_'):
+            try:
+                bitmap_num = int(base_name.split('_')[1])
+                if 96 <= bitmap_num <= 122:
+                    new_num = bitmap_num + 96
+                    base_name = f"bitmap_{new_num:03d}"
+            except (ValueError, IndexError):
+                pass  # Keep original name if parsing fails
+        
         output_file = os.path.join(output_dir, f"{base_name}.bmp")
         
         # Save as BMP
