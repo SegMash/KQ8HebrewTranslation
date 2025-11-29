@@ -178,7 +178,7 @@ def split_string(input: str, max_length: int, debug: bool = True):
                 padding_to_add -= 0.5
             if (padding_to_add > padding_needed):
                 prev_chunk = prev_chunk.replace('~', '', 1)
-            more_padding_needed = (int)((26 - calculate_weighted_length(prev_chunk))*2)
+            more_padding_needed = (int)((max_length - calculate_weighted_length(prev_chunk))*2)
             #print(f"Debug: more_padding_needed={more_padding_needed:.2f}")
             prev_chunk = '~' * more_padding_needed + prev_chunk + '~' * more_padding_needed
             #print(f"Now calculate_weighted_length(prev_chunk) = {calculate_weighted_length(prev_chunk)}")

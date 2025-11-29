@@ -62,7 +62,7 @@ def map_files(input1_path, input2_path, output_path, max_length):
                     # Write the mapping
                     if "500" in output_path and not "5000" in output_path:
                         #line2 = split_string(line2, 100000, False)
-                        line2 = split_string(line2, max_length, False)
+                        line2 = split_string(line2, 22, False)
                     else:
                         line2 = split_string(line2, max_length, False)
                     output_file.write(f"{line1} === {line2}\n")
