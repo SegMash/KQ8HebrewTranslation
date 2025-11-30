@@ -15,14 +15,7 @@ output_kq3/
 *.json
 */*_messages_english.txt
 */*_mapping.txt
-glyphs_fixed
 patch
-glyphs_16_21
-glyphs_16_21_l
-glyphs_16_21_sl
-glyphs_24_38
-glyphs_32_46
-glyphs_32_46_sl
 glyphs_fixed_20
 glyphs_fixed_20_sl
 glyphs_fixed_27

@@ -6,7 +6,6 @@ if not "%1"=="" if not "%2"=="" goto %1
 
 set GAME_PATH=C:\Games\KQ8
 set BACKUP_PATH=C:\Games\Backup\KQ8
-set GLYPHS_FIXED=.\glyphs_fixed
 set GLYPHS_FIXED_CONSOLE=.\glyphs_fixed_console_menu
 set GLYPHS_FIXED_CONSOLEL=.\glyphs_fixed_consolel
 set GLYPHS_FIXED_20=.\glyphs_fixed_20
@@ -22,7 +21,6 @@ echo KQ8 Hebrew Translation Workflow
 echo ========================================
 echo.
 
-python.exe .\fix_glyph.py .\glyphs_8 %GLYPHS_FIXED%
 python.exe .\fix_glyph.py .\glyphs_16_15_menu %GLYPHS_FIXED_CONSOLE%
 python.exe .\fix_glyph.py .\glyphs_16_21 %GLYPHS_FIXED_20%
 python.exe .\fix_glyph.py .\glyphs_16_21_sl %GLYPHS_FIXED_20_SL%
